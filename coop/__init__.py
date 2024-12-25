@@ -16,7 +16,7 @@ def create_app(test_config=None):
     @app.route('/healthz')
     def healthz():
         return jsonify({}), 200
-    from .experimentals import views
+    from . import views
     app.register_blueprint(views.bexp)
 
     return app
