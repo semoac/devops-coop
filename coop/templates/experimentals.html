@@ -1,10 +1,35 @@
 {% extends "layout.html" %}
 {% block body %}
-  <ul class=entries>
-  {% for entry in entries %}
-    <li><h2>{{ entry.title }}</h2>{{ entry.text|safe }}
-  {% else %}
-    <li><em>Unbelievable.  No entries here so far</em>
-  {% endfor %}
-  </ul>
+<script>
+  $(document).ready( function () {
+    $('#ExpTable').DataTable({
+      searching: false,
+      ordering:  false
+    }
+    );
+  } );
+</script>
+
+<table id="ExpTable" class="display">
+  <thead>
+      <tr>
+          <th>Project</th>
+          <th>Branch</th>
+          <th>Last Deploy</th>
+          <th>Owner</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+        {% for ns in namespaces %}
+        <td>{{ ns.name }}</td>
+        <td>{{ ns.git_branch }}</td>
+        <td>{{ ns.last_deployment_timestamp.strftime('%B %d, %Y %I:%M:%S') }}</td>
+        <td>{{ ns.git_user }}</td>
+        {% endfor %}
+      </tr>
+  </tbody>
+</table>
+
+
 {% endblock %}

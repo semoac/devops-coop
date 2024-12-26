@@ -17,6 +17,5 @@ class K8SClient():
         try:
             configmap = self._v1.read_namespaced_config_map(name, namespace_name)
         except ApiException as e:
-            print("Exception when calling CoreV1Api->read_namespaced_config_map: %s\n" % e)
             return {}
         return configmap.data

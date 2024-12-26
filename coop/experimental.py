@@ -21,15 +21,25 @@ class Experimental():
             self.k8s_v1_apps_client = self._client.get_apps_client
 
 
-    def find_namespaces(self):
+    def find_namespaces(self) -> list[Namespace]:
+
+        namespace_returned = []
         namespaces = self.k8s_v1_core_client.list_namespace(label_selector=self._NS_LABEL_SELECTOR)
 
         for ns in namespaces.items:
-            namespace_object = Namespace.load_from_configmap(ns,)
+            namespace_returned.append(self.get_namespace(ns.metadata.name))
 
-
-
-        return [ns.metadata.name for ns in namespaces.items]
+        return namespace_returned
     
     def get_namespace_configmap(self,namespace_name):
         return self._client.get_configmap(EXPERIMENTAL_CONFIGMAP_NAME, namespace_name)
+    
+    def get_namespace(self, namespace_name):
+        namespace = self.k8s_v1_core_client.read_namespace(namespace_name)
+        namespace_configmap = self.get_namespace_configmap(namespace.metadata.name)
+        namespace_object = Namespace.load_from_configmap(namespace,namespace_configmap)
+        return namespace_object
+
+    def patch_namespace(self, namespace: Namespace, change: dict = {}) -> Namespace:
+        namespace.update_from_dict(change)
+        return namespace
